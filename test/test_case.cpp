@@ -37,6 +37,7 @@ BOOST_AUTO_TEST_CASE(default_case2) {
 	BOOST_CHECK(s.getToken() == "this");
 	s.nextToken();
 	BOOST_CHECK(s.getToken() == "string");
+	BOOST_CHECK(s.nextToken() == false);
 }
 
 BOOST_AUTO_TEST_CASE(default_case3) {
@@ -47,6 +48,7 @@ BOOST_AUTO_TEST_CASE(default_case3) {
 	BOOST_CHECK(s.getToken() == "this");
 	s.nextToken();
 	BOOST_CHECK(s.getToken() == "string");
+	BOOST_CHECK(s.nextToken() == false);
 }
 
 BOOST_AUTO_TEST_CASE(default_case4) {
@@ -57,6 +59,7 @@ BOOST_AUTO_TEST_CASE(default_case4) {
 	BOOST_CHECK(s.getToken() == "this");
 	s.nextToken();
 	BOOST_CHECK(s.getToken() == "string");
+	BOOST_CHECK(s.nextToken() == false);
 }
 
 BOOST_AUTO_TEST_CASE(only_space) {
@@ -67,6 +70,7 @@ BOOST_AUTO_TEST_CASE(only_space) {
 	BOOST_CHECK(s.getToken() == "this");
 	s.nextToken();
 	BOOST_CHECK(s.getToken() == "string");
+	BOOST_CHECK(s.nextToken() == false);
 }
 
 BOOST_AUTO_TEST_CASE(other_char) {
@@ -77,6 +81,7 @@ BOOST_AUTO_TEST_CASE(other_char) {
 	BOOST_CHECK(s.getToken() == "this");
 	s.nextToken();
 	BOOST_CHECK(s.getToken() == "string");
+	BOOST_CHECK(s.nextToken() == false);
 }
 
 BOOST_AUTO_TEST_CASE(endl) {
@@ -87,6 +92,7 @@ BOOST_AUTO_TEST_CASE(endl) {
 	BOOST_CHECK(s.getToken() == "this");
 	s.nextToken();
 	BOOST_CHECK(s.getToken() == "string");
+	BOOST_CHECK(s.nextToken() == false);
 }
 
 BOOST_AUTO_TEST_CASE(mix_space_endl) {
@@ -95,6 +101,7 @@ BOOST_AUTO_TEST_CASE(mix_space_endl) {
 	BOOST_CHECK(s.getToken() == "split\nthis");
 	s.nextToken();
 	BOOST_CHECK(s.getToken() == "string");
+	BOOST_CHECK(s.nextToken() == false);
 }
 
 BOOST_AUTO_TEST_CASE(utf8) {
@@ -105,4 +112,102 @@ BOOST_AUTO_TEST_CASE(utf8) {
 	BOOST_CHECK(s.getToken() == "dóîs");
 	s.nextToken();
 	BOOST_CHECK(s.getToken() == "ütf");
+	BOOST_CHECK(s.nextToken() == false);
+}
+
+BOOST_AUTO_TEST_CASE(keep_delimiters) {
+	SimpleTokenizer s("split this string", " ", true);
+	s.nextToken();
+	BOOST_CHECK(s.getToken() == "split");
+	s.nextToken();
+	BOOST_CHECK(s.getToken() == " ");
+	s.nextToken();
+	BOOST_CHECK(s.getToken() == "this");
+	s.nextToken();
+	BOOST_CHECK(s.getToken() == " ");
+	s.nextToken();
+	BOOST_CHECK(s.getToken() == "string");
+	BOOST_CHECK(s.nextToken() == false);
+}
+
+BOOST_AUTO_TEST_CASE(keep_delimiters2) {
+	SimpleTokenizer s("split;this string", " ;", true);
+	s.nextToken();
+	BOOST_CHECK(s.getToken() == "split");
+	s.nextToken();
+	BOOST_CHECK(s.getToken() == ";");
+	s.nextToken();
+	BOOST_CHECK(s.getToken() == "this");
+	s.nextToken();
+	BOOST_CHECK(s.getToken() == " ");
+	s.nextToken();
+	BOOST_CHECK(s.getToken() == "string");
+	BOOST_CHECK(s.nextToken() == false);
+}
+
+BOOST_AUTO_TEST_CASE(keep_delimiters3) {
+	SimpleTokenizer s("split;.this string", " ;.", true);
+	s.nextToken();
+	BOOST_CHECK(s.getToken() == "split");
+	s.nextToken();
+	BOOST_CHECK(s.getToken() == ";");
+	s.nextToken();
+	BOOST_CHECK(s.getToken() == ".");
+	s.nextToken();
+	BOOST_CHECK(s.getToken() == "this");
+	s.nextToken();
+	BOOST_CHECK(s.getToken() == " ");
+	s.nextToken();
+	BOOST_CHECK(s.getToken() == "string");
+	BOOST_CHECK(s.nextToken() == false);
+}
+
+BOOST_AUTO_TEST_CASE(keep_delimiters4) {
+	SimpleTokenizer s(" split;.this  string", " ;.", true);
+	s.nextToken();
+	BOOST_CHECK(s.getToken() == " ");
+	s.nextToken();
+	BOOST_CHECK(s.getToken() == "split");
+	s.nextToken();
+	BOOST_CHECK(s.getToken() == ";");
+	s.nextToken();
+	BOOST_CHECK(s.getToken() == ".");
+	s.nextToken();
+	BOOST_CHECK(s.getToken() == "this");
+	s.nextToken();
+	BOOST_CHECK(s.getToken() == " ");
+	s.nextToken();
+	BOOST_CHECK(s.getToken() == " ");
+	s.nextToken();
+	BOOST_CHECK(s.getToken() == "string");
+	BOOST_CHECK(s.nextToken() == false);
+}
+
+BOOST_AUTO_TEST_CASE(advanced_test) {
+	SimpleTokenizer s("	 split;.	this . string ", " \t;.", true);
+	s.nextToken();
+	BOOST_CHECK(s.getToken() == "\t");
+	s.nextToken();
+	BOOST_CHECK(s.getToken() == " ");
+	s.nextToken();
+	BOOST_CHECK(s.getToken() == "split");
+	s.nextToken();
+	BOOST_CHECK(s.getToken() == ";");
+	s.nextToken();
+	BOOST_CHECK(s.getToken() == ".");
+	s.nextToken();
+	BOOST_CHECK(s.getToken() == "\t");
+	s.nextToken();
+	BOOST_CHECK(s.getToken() == "this");
+	s.nextToken();
+	BOOST_CHECK(s.getToken() == " ");
+	s.nextToken();
+	BOOST_CHECK(s.getToken() == ".");
+	s.nextToken();
+	BOOST_CHECK(s.getToken() == " ");
+	s.nextToken();
+	BOOST_CHECK(s.getToken() == "string");
+	s.nextToken();
+	BOOST_CHECK(s.getToken() == " ");
+	BOOST_CHECK(s.nextToken() == false);
 }

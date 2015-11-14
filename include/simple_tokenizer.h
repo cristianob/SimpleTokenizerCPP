@@ -18,21 +18,28 @@
 
 class SimpleTokenizer 
 {
-    public:
-        static const std::string DELIMITERS;
-        
-        SimpleTokenizer(const std::string& str);
-        SimpleTokenizer(const std::string& str, const std::string& delimiters);
-        
-        bool nextToken();
-        bool nextToken(const std::string& delimiters);
-        
-        const std::string getToken() const;
-        void reset();
+	public:
+		static const std::string DELIMITERS;
+
+		SimpleTokenizer(const std::string& str);
+		SimpleTokenizer(const std::string& str, const std::string& delimiters);
+		SimpleTokenizer(const std::string& s, const std::string& delimiters, bool ktokens);
+
+		bool nextToken();
+		bool nextToken(const std::string& delimiters);
+		bool nextToken_K(const std::string& delimiters);
+		bool nextToken_notK(const std::string& delimiters);
+
+		bool keepDelimiters(bool k);
+
+		const std::string getToken() const;
+		void reset();
     
-    protected:
-        size_t offset;
-        const std::string string;
-        std::string token;
-        std::string delimiters;
+    	protected:
+		size_t offset;
+		const std::string string;
+		std::string token;
+		std::string delimiters;
+		bool keep_delimiters;
+		bool last_was_delimiter;
 };
