@@ -211,3 +211,13 @@ BOOST_AUTO_TEST_CASE(advanced_test) {
 	BOOST_CHECK(s.getToken() == " ");
 	BOOST_CHECK(s.nextToken() == false);
 }
+
+BOOST_AUTO_TEST_CASE(diferent_delimiters) {
+	SimpleTokenizer s("reserved_word this is the value\n");
+	s.nextToken();
+	BOOST_CHECK(s.getToken() == "reserved_word");
+	s.nextToken("\n");
+	std::cout << "\"" << s.getToken() << "\"" << std::endl;
+	BOOST_CHECK(s.getToken() == "this is the value");
+	BOOST_CHECK(s.nextToken() == false);
+}
