@@ -217,7 +217,41 @@ BOOST_AUTO_TEST_CASE(diferent_delimiters) {
 	s.nextToken();
 	BOOST_CHECK(s.getToken() == "reserved_word");
 	s.nextToken("\n");
-	std::cout << "\"" << s.getToken() << "\"" << std::endl;
 	BOOST_CHECK(s.getToken() == "this is the value");
+	BOOST_CHECK(s.nextToken() == false);
+}
+
+BOOST_AUTO_TEST_CASE(diferent_delimiters_2) {
+	SimpleTokenizer s("reserved+word éthis is the value\n");
+	s.nextToken();
+	BOOST_CHECK(s.getToken() == "reserved+word");
+	s.nextToken("\n");
+	BOOST_CHECK(s.getToken() == "éthis is the value");
+	BOOST_CHECK(s.nextToken() == false);
+}
+
+BOOST_AUTO_TEST_CASE(diferent_delimiters_3) {
+	SimpleTokenizer s("reserved_word éthis\nis the value\n");
+	s.nextToken();
+	BOOST_CHECK(s.getToken() == "reserved_word");
+	s.nextToken("\n");
+	BOOST_CHECK(s.getToken() == "éthis");
+	s.nextToken("\n");
+	BOOST_CHECK(s.getToken() == "is the value");
+	BOOST_CHECK(s.nextToken() == false);
+}
+
+BOOST_AUTO_TEST_CASE(advanced_diferent_delimiters) {
+	SimpleTokenizer s("reserved_word éthis\nis the value né\n");
+	s.nextToken();
+	BOOST_CHECK(s.getToken() == "reserved_word");
+	s.nextToken("\n");
+	BOOST_CHECK(s.getToken() == "éthis");
+	s.nextToken();
+	BOOST_CHECK(s.getToken() == "is");
+	s.nextToken();
+	BOOST_CHECK(s.getToken() == "the");
+	s.nextToken("\n");
+	BOOST_CHECK(s.getToken() == "value né");
 	BOOST_CHECK(s.nextToken() == false);
 }

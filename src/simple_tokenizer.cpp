@@ -84,14 +84,17 @@ bool SimpleTokenizer::nextToken_K(const std::string& delimiters) {
 	return true;
 }
 
-bool SimpleTokenizer::nextToken_notK(const std::string& delimiters) {
-	size_t i = this->string.find_first_not_of(delimiters, this->offset);   
+bool SimpleTokenizer::nextToken_notK(const std::string& delimiters_a) {
+	if(delimiters_a != this->delimiters)
+		this->offset++;
+
+	size_t i = this->string.find_first_not_of(delimiters_a, this->offset);   
 	if (std::string::npos == i) {
 		this->offset = this->string.length();
 		return false;
 	}
 
-	size_t j = this->string.find_first_of(delimiters, i);
+	size_t j = this->string.find_first_of(delimiters_a, i);
 	if (std::string::npos == j) {
 		this->token = this->string.substr(i);
 		this->offset = this->string.length();
